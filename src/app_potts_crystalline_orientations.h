@@ -17,7 +17,7 @@
 
 #ifdef APP_CLASS
 // clang-format off
-AppStyle(potts/quaternion,AppPottsQuaternion)
+AppStyle(potts/crystalline_orientations,AppPottsCrystallineOrientations)
 // clang-format on
 #else
 
@@ -32,10 +32,10 @@ using std::vector;
 
 namespace SPPARKS_NS {
 
-class AppPottsQuaternion : public AppPotts {
+class AppPottsCrystallineOrientations : public AppPotts {
 public:
-  AppPottsQuaternion(class SPPARKS *, int, char **);
-  virtual ~AppPottsQuaternion() {}
+  AppPottsCrystallineOrientations(class SPPARKS *, int, char **);
+  virtual ~AppPottsCrystallineOrientations() {}
   virtual void init_app();
   virtual void grow_app();
   virtual double site_energy(int i);

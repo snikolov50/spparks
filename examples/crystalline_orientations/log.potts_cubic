@@ -1,8 +1,8 @@
 
 seed		 56789
 
-app_style	 potts/quaternion ${Q} cubic
-app_style	 potts/quaternion 10000 cubic
+app_style	 potts/crystalline_orientations ${Q} cubic
+app_style	 potts/crystalline_orientations 10000 cubic
 
 dimension	 3
 lattice		 sc/26n 1.0

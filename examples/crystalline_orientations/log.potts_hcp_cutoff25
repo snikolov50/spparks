@@ -5,8 +5,8 @@ variable Q equal 10000
 seed		 56789
 
 # Here, the optional "theta_cut" parameter is set to 25 degrees, instead of the default 15 degrees.
-app_style	 potts/quaternion ${Q} hcp 25
-app_style	 potts/quaternion 10000 hcp 25
+app_style	 potts/crystalline_orientations ${Q} hcp 25
+app_style	 potts/crystalline_orientations 10000 hcp 25
 
 dimension	 3
 lattice		 sc/26n 1.0

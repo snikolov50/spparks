@@ -15,13 +15,13 @@
    Meg McCarthy, megmcca@sandia.gov, Sandia National Laboratories
 ------------------------------------------------------------------------- */
 
-#include "app_potts_quaternion.h"
+#include "app_potts_crystalline_orientations.h"
 #include "error.h"
 #include "math.h"
-#include "potts_quaternion/cubic_symmetries.h"
-#include "potts_quaternion/disorientation.h"
-#include "potts_quaternion/hcp_symmetries.h"
-#include "potts_quaternion/quaternion.h"
+#include "crystalline_orientations/cubic_symmetries.h"
+#include "crystalline_orientations/disorientation.h"
+#include "crystalline_orientations/hcp_symmetries.h"
+#include "crystalline_orientations/quaternion.h"
 #include "random_park.h"
 #include "stdlib.h"
 #include "string.h"
@@ -31,17 +31,17 @@ using namespace SPPARKS_NS;
 
 /* ---------------------------------------------------------------------- */
 
-AppPottsQuaternion::AppPottsQuaternion(SPPARKS *spk, int narg, char **arg)
+AppPottsCrystallineOrientations::AppPottsCrystallineOrientations(SPPARKS *spk, int narg, char **arg)
     : AppPotts(spk, narg, arg), symmetries(), q0(nullptr), qx(nullptr),
       qy(nullptr), qz(nullptr), theta_cut(15.0), unique_neigh(nullptr) {
   // parse arguments for PottsNeighOnly class only, not children
   // args: nspins, crystal structure, Read-Shockley angle
 
-  if (strcmp(style, "potts/quaternion") != 0)
+  if (strcmp(style, "potts/crystalline_orientations") != 0)
     return;
 
   if (narg != 3 && narg != 4)
-    error->all(FLERR, "Illegal 'potts/quaternion' command");
+    error->all(FLERR, "Illegal 'potts/crystalline_orientations' command");
 
   // Check crystal structure input
   if (strcmp(arg[2], "cubic") == 0) {
@@ -49,7 +49,7 @@ AppPottsQuaternion::AppPottsQuaternion(SPPARKS *spk, int narg, char **arg)
   } else if (strcmp(arg[2], "hcp") == 0) {
     symmetries = HCP::get_symmetries();
   } else {
-    error->all(FLERR, "Illegal 'potts/quaternion command; expected "
+    error->all(FLERR, "Illegal 'potts/crystalline_orientations command; expected "
                       "'cubic' or 'hcp'");
   }
   if (4 == narg) {
@@ -57,13 +57,13 @@ AppPottsQuaternion::AppPottsQuaternion(SPPARKS *spk, int narg, char **arg)
     if (theta_cut <= 0.0)
       error->all(
           FLERR,
-          "Illegal 'potts/quaternion command; theta_cut must be positive");
+          "Illegal 'potts/crystalline_orientations command; theta_cut must be positive");
     if (strcmp(arg[2], "cubic") == 0 && theta_cut > 62.7) {
-      error->all(FLERR, "Illegal 'potts/quaternion command; "
+      error->all(FLERR, "Illegal 'potts/crystalline_orientations command; "
                         "theta_cut for 'cubic' must "
                         "be between 0.0 and 62.7 degrees");
     } else if (strcmp(arg[2], "hcp") == 0 && theta_cut > 93.8) {
-      error->all(FLERR, "Illegal 'potts/quaternion command; "
+      error->all(FLERR, "Illegal 'potts/crystalline_orientations command; "
                         "theta_cut for 'hcp' must "
                         "be between 0.0 and 93.8 degrees");
     }
@@ -86,7 +86,7 @@ AppPottsQuaternion::AppPottsQuaternion(SPPARKS *spk, int narg, char **arg)
    check validity of site values
 ------------------------------------------------------------------------- */
 
-void AppPottsQuaternion::init_app() {
+void AppPottsCrystallineOrientations::init_app() {
   delete[] sites;
   delete[] unique;
   delete[] unique_neigh;
@@ -116,7 +116,7 @@ void AppPottsQuaternion::init_app() {
 
 /* ---------------------------------------------------------------------- */
 
-void AppPottsQuaternion::grow_app() {
+void AppPottsCrystallineOrientations::grow_app() {
   spin = iarray[0];
   q0 = darray[0];
   qx = darray[1];
@@ -126,7 +126,7 @@ void AppPottsQuaternion::grow_app() {
 
 /* ---------------------------------------------------------------------- */
 
-void AppPottsQuaternion::flip_site(int i, const SiteState &s) {
+void AppPottsCrystallineOrientations::flip_site(int i, const SiteState &s) {
   spin[i] = s.spin;
   q0[i] = s.q[0];
   qx[i] = s.q[1];
@@ -136,7 +136,7 @@ void AppPottsQuaternion::flip_site(int i, const SiteState &s) {
 
 /* ---------------------------------------------------------------------- */
 
-double AppPottsQuaternion::site_energy(int i) {
+double AppPottsCrystallineOrientations::site_energy(int i) {
   double energy = 0.0;
   double ratio = 0.0;
   vector<double> qi{q0[i], qx[i], qy[i], qz[i]};
@@ -166,7 +166,7 @@ double AppPottsQuaternion::site_energy(int i) {
    technically this is an incorrect rejection-KMC algorithm
 ------------------------------------------------------------------------- */
 
-void AppPottsQuaternion::site_event_rejection(int i, RandomPark *random) {
+void AppPottsCrystallineOrientations::site_event_rejection(int i, RandomPark *random) {
   int oldstate = spin[i];
   // Old state
   SiteState s0(oldstate, {q0[i], qx[i], qy[i], qz[i]});
@@ -238,8 +238,8 @@ void AppPottsQuaternion::site_event_rejection(int i, RandomPark *random) {
 
 /* ---------------------------------------------------------------------- */
 
-double AppPottsQuaternion::site_propensity(int) {
-  error->all(FLERR, "Illegal potts/quaternion solver used.  KMC not "
+double AppPottsCrystallineOrientations::site_propensity(int) {
+  error->all(FLERR, "Illegal potts/crystalline_orientations solver used.  KMC not "
                     "implemented.  Use rKMC.");
   return -1.0;
 }
