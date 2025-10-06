@@ -14,6 +14,7 @@ ExternalProject_Add(libstitch_build
   CONFIGURE_COMMAND    ""
   # build just the 'stitch.lib' target
   BUILD_COMMAND       ${CMAKE_MAKE_PROGRAM} stitch.lib
+  BUILD_COMMAND       ${CMAKE_MAKE_PROGRAM} stitch_test
   # skip any install step
   INSTALL_COMMAND     ""
 )
